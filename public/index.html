@@ -2,47 +2,97 @@
 <html ng-app="yardApp">
 <head>
   <title>Yard Sale</title>
-   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0/angular.min.js"></script>
   <script src="assets/controllers/app.js"></script>
   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.6/cosmo/bootstrap.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
-<body>
+<body ng-controller="YardSaleController as yardSale">
   <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="#">Yard Sale</a>
       </div>
+      <div class="nav navbar-nav navbar-right" ng-show="yardSale.loggedIn">
+        <a class="navbar-brand" href="#">Welcome: {{yardSale.username}}</a>
+        <a class="navbar-brand" href="#">Balance: $1,000,000</a>
+      </div>
     </div>
   </nav>
- 
-  <div class="background">
-    <img src="https://blog.ourthriftynickel.com/wp-content/uploads/2012/07/YardSaleHC1206-copy.jpg">
-  </div>
-
-  <h1>WELCOME TO MY YARD SALE</h1>
-
-  <div class="container">
-    <div class="row border-login">
-      <div class="col-md-4 col-md-offset-4 login-form">
-        <form class="form-horizontal">
-          <fieldset>
-            <legend>SIGN IN</legend>
-              <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" placeholder="Username" name="username">
-              </div>
-              <div class="form-group">
-                <label for="passwordInput">Password</label>
-                <input type="password" class="form-control" id=passwordInput placeholder="Password" name="password">
-              </div>
-              <div class="form-group">
+  <div ng-hide="yardSale.loggedIn">
+    <div class="background">
+      <img src="https://blog.ourthriftynickel.com/wp-content/uploads/2012/07/YardSaleHC1206-copy.jpg">
+    </div>
+    <h1>WELCOME TO MY YARD SALE</h1>
+    
+    <div class="container">
+      <div class="row border-login">
+        <div class="col-md-4 col-md-offset-4 login-form">
+          <form class="form-horizontal" ng-submit="yardSale.login()">
+            <fieldset>
+              <legend>SIGN IN</legend>
+                <div class="form-group">
+                  <label for="username" ng-model="username">Username</label>
+                  <input type="text" class="form-control" ng-model="yardSale.username" id="username" name="username" placeholder="username">
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                </div>
                 <div class="col-md-4 col-md-offset-4">
                   <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-show="yardSale.loggedIn">
+    <div row>
+      <div class="col-md-4 col-md-offset-4">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title"> + Add An Item</h3>
+          </div>
+          <div class="panel-body">
+            <form ng-submit="yardSale.addItem()">
+              <input type="text" class="form-control" placeholder="Item Name" ng-model="yardSale.item.name">
+              <br>
+              <input type="text" class="form-control" type="number" placeholder="$ Cost" ng-model="yardSale.item.cost">
+              <br>
+              <textarea class="form-control" rows="3" placeholder="Description" ng-model="yardSale.item.description"></textarea>
+              <div class="col-md-4 col-md-offset-4">
+                <br>
+                  <button type="submit" class="btn btn-primary" value="add">Add Item</button>
               </div>
-          </fieldset>
-        </form>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 col-md-offset-4" ng-show="yardSale.loggedIn">
+        <div class="row">
+        <table class="table table-striped table-hover" ng-repeat="item in yardSale.items">
+          <thead>
+            <tr class="info">
+              <th>Item Name</th>
+              <th>Price</th>
+              <th>Description</th>
+              <th>Purchase</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{item.name}}</td>
+              <td>{{ item.cost | currency }}</td>
+              <td>{{ item.description }}</td>
+              <td>
+                <button type="button" ng-click=" yardSale.deleteItem(item._id)" class="btn btn-primary">Buy Now</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
       </div>
     </div>
   </div>
